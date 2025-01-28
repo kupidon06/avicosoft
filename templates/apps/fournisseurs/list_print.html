@@ -1,0 +1,33 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Name</th>
+          <th style="padding: 8px; text-align: left;">Phone</th>
+          <th style="padding: 8px; text-align: left;">Address</th>
+          <th style="padding: 8px; text-align: left;">Details</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        {% for fournisseur in fournisseurs %}
+        <tr style="background-color: #ffffff;">
+         
+            <!-- Nom -->
+          <td style="padding: 8px;">{{ fournisseur.name }}</td>
+         
+          <!-- Capacité -->
+          <td style="padding: 8px; text-align: center;">{{ fournisseur.phone }}</td>
+          <!-- Description -->
+          
+          <td style="padding: 8px;"> {{ fournisseur.address }}</td>
+        
+          <td style="padding: 8px;">{{ fournisseur.details }}</td>
+          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

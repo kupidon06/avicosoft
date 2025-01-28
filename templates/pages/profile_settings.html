@@ -1,0 +1,60 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center py-12 px-6 bg-gradient-to-r from-blue-100 to-indigo-100 dark:bg-gray-900">
+
+    <!-- Formulaire pour les informations générales -->
+    <form method="POST" enctype="multipart/form-data" class="space-y-8 rounded-lg shadow-xl max-w-3xl w-full bg-white dark:bg-gray-800 p-8 transition-transform transform hover:scale-105" novalidate>
+        {% csrf_token %}
+        <div class="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">General Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for field in profile_form %}
+                    <div class="flex flex-col space-y-2">
+                        <label for="{{ field.id_for_label }}" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ field.label }}</label>
+                        {{ field|attr:"class:bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" name="profile_submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">Save General Information</button>
+        </div>
+    </form>
+
+    <!-- Formulaire pour la configuration d'email -->
+    <form method="POST" class="space-y-8 rounded-lg shadow-xl max-w-3xl w-full bg-white dark:bg-gray-800 p-8 transition-transform transform hover:scale-105" novalidate>
+        {% csrf_token %}
+        <div class="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">Email Configuration</h2>
+            <div class="space-y-4">
+                {% for field in email_form %}
+                    <div class="flex flex-col space-y-2">
+                        <label for="{{ field.id_for_label }}" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ field.label }}</label>
+                        {{ field|attr:"class:bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" name="email_submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">Save Email Configuration</button>
+        </div>
+    </form>
+
+    <!-- Formulaire pour l'intégration de paiement -->
+    <form method="POST" class="space-y-8 rounded-lg shadow-xl max-w-3xl w-full bg-white dark:bg-gray-800 p-8 transition-transform transform hover:scale-105" novalidate>
+        {% csrf_token %}
+        <div class="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white border-b pb-2 mb-4">Payment Integration</h2>
+            <div class="space-y-4">
+                {% for field in payment_form %}
+                    <div class="flex flex-col space-y-2">
+                        <label for="{{ field.id_for_label }}" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ field.label }}</label>
+                        {{ field|attr:"class:bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" name="payment_submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">Save Payment Integration</button>
+        </div>
+    </form>
+
+</div>
+{% endblock content %}

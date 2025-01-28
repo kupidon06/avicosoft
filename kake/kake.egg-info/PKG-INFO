@@ -1,0 +1,18 @@
+Metadata-Version: 2.2
+Name: kake
+Version: 0.1
+Classifier: Development Status :: 4 - Beta
+Classifier: Framework :: Django
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Requires-Python: >=3.6
+Requires-Dist: django
+Requires-Dist: psycopg2-binary
+Dynamic: classifier
+Dynamic: requires-dist
+Dynamic: requires-python

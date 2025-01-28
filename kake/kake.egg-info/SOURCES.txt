@@ -1,0 +1,17 @@
+setup.py
+kake/__init__.py
+kake/decorators.py
+kake/middleware.py
+kake/mixins.py
+kake/router.py
+kake/tenant_manager.py
+kake.egg-info/PKG-INFO
+kake.egg-info/SOURCES.txt
+kake.egg-info/dependency_links.txt
+kake.egg-info/requires.txt
+kake.egg-info/top_level.txt
+kake/management/__init__.py
+kake/management/commands/__init__.py
+kake/management/commands/migrate_tenants.py
+kake/models/mixins.py
+kake/views/mixins.py

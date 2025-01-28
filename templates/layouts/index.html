@@ -1,0 +1,110 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Inclure les fichiers CSS et autres ressources nécessaires -->
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-800">
+
+  <script>
+    function verifyButtonAccessibility() {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        if (!button.textContent.trim() && !button.getAttribute('aria-label') && !button.getAttribute('aria-labelledby')) {
+          console.error('Button missing discernible text:', button);
+        }
+      });
+    }
+
+    function initializeEventListeners() {
+      // Exemple d'écouteur d'événements utilisant la délégation
+      document.addEventListener('click', function(event) {
+        if (event.target.matches('.some-button-class')) {
+          // Code à exécuter lorsque .some-button-class est cliqué
+          console.log('Button clicked');
+        }
+      });
+
+      // Ajoutez d'autres écouteurs d'événements ici si nécessaire
+    }
+
+    function reinitializeScripts() {
+      // Réexécutez ici tous les scripts nécessaires après le changement de contenu
+      // Par exemple, si vous avez des scripts pour initialiser des composants, appelez-les ici
+      console.log('Reinitializing scripts...');
+      // Exemple : initializeSomeComponent();
+    }
+
+    function route() {
+      const hash = window.location.hash.substring(1);
+      console.log('Hash:', hash); // Débogage: Afficher le hash actuel
+
+      switch (hash) {
+        case 'home':
+          console.log('Fetching home page...'); // Débogage: Indiquer que la page d'accueil est en cours de chargement
+          fetch('/admin/')
+            .then(response => {
+              if (!response.ok) throw new Error('Page not found');
+              return response.text();
+            })
+            .then(html => {
+              console.log('Home page loaded:', html); // Débogage: Afficher le contenu HTML chargé
+              document.body.innerHTML = html;
+              initializeEventListeners(); // Réinitialiser les écouteurs d'événements
+              reinitializeScripts(); // Réexécuter les scripts nécessaires
+              verifyButtonAccessibility(); // Vérifier l'accessibilité des boutons
+            })
+            .catch(error => {
+              console.error('Error loading home page:', error); // Débogage: Afficher l'erreur
+              document.body.innerHTML = `<h1>Error</h1><p>${error.message}</p>`;
+            });
+          break;
+        case 'menus':
+          console.log('Fetching menus page...'); // Débogage: Indiquer que la page des menus est en cours de chargement
+          fetch('/admin/menus/')
+            .then(response => {
+              if (!response.ok) throw new Error('Page not found');
+              return response.text();
+            })
+            .then(html => {
+              console.log('Menus page loaded:', html); // Débogage: Afficher le contenu HTML chargé
+              document.body.innerHTML = html;
+              initializeEventListeners(); // Réinitialiser les écouteurs d'événements
+              reinitializeScripts(); // Réexécuter les scripts nécessaires
+              verifyButtonAccessibility(); // Vérifier l'accessibilité des boutons
+            })
+            .catch(error => {
+              console.error('Error loading menus page:', error); // Débogage: Afficher l'erreur
+              document.body.innerHTML = `<h1>Error</h1><p>${error.message}</p>`;
+            });
+          break;
+        default:
+          console.log('404 Not Found'); // Débogage: Indiquer que la page n'a pas été trouvée
+          document.body.innerHTML = '<h1>404 Not Found</h1><p>Page not found.</p>';
+      }
+    }
+
+    // Exécuter la fonction de routage au chargement initial et lors des changements d'URL
+    window.addEventListener('load', () => {
+      console.log('Page loaded'); // Débogage: Indiquer que la page est chargée
+      route();
+      initializeEventListeners(); // Initialiser les écouteurs d'événements
+      reinitializeScripts(); // Réexécuter les scripts nécessaires
+      verifyButtonAccessibility(); // Vérifier l'accessibilité des boutons
+    });
+    window.addEventListener('hashchange', () => {
+      console.log('Hash changed'); // Débogage: Indiquer que le hash a changé
+      route();
+    });
+  </script>
+
+  <script>
+    console.log("hello");
+  </script>
+
+</body>
+
+</html>

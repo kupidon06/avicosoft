@@ -1,0 +1,152 @@
+<aside class="w-full md:w-1/4 bg-white dark:bg-gray-800 p-4 flex flex-col space-y-4 rounded-lg shadow-lg transition-all duration-500">
+    <!-- Header -->
+    <h5 id="drawer-label" class="text-xl font-bold text-gray-700 dark:text-gray-300 mb-4 uppercase">
+        Batch Details
+    </h5>
+
+    <!-- Section principale -->
+    <div id="batch-details" class="hidden md:block space-y-4">
+        <!-- Batch Image -->
+        {% if batch.breed.photo %}
+        <div class="mb-4 flex justify-center">
+            <div class="w-32 h-32 overflow-hidden rounded-full border border-gray-300">
+                <img src="{{ batch.breed.photo.url }}" 
+                     alt="{{ batch.breed.name }}" 
+                     class="w-full h-full object-cover">
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Batch Details -->
+        <div class="space-y-2">
+            <!-- Nom du batch -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Batch:</span>
+                <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ batch.name }}</span>
+            </div>
+
+            <!-- Statut -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Status:</span>
+                <span class="inline-block w-24 px-3 py-1 rounded-lg
+                    {% if batch.status == 'active' %}bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100
+                    {% elif batch.status == 'inactive' %}bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100
+                    {% elif batch.status == 'quarantine' %}bg-orange-100 text-orange-700 dark:bg-orange-700 dark:text-orange-100{% endif %}">
+                    {{ batch.status }}
+                </span>
+            </div>
+
+            <!-- Détails -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Breed:</span>
+                <a href="{% url 'breed_list'%}?q={{ batch.breed.name  }}">
+                    <span class="text-gray-800 dark:text-gray-200">{{ batch.breed.name }}</span>
+                </a>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Building:</span>
+                <a href="{% url 'building_list'%}?q={{ batch.building.name }}">
+                    <span class="text-gray-800 dark:text-gray-200">{{ batch.building.name }}</span>
+                </a>
+            </div>
+
+            <!-- Arrival Details -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Arrival Date:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.arrival_date }}</span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Arrival Age:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.arrival_age }} days</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Current Age:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_current_age.days }} days/{{ batch.get_current_age.weeks }} weeks</span>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Arrival Quantity:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.arrival_quantity }}</span>
+            </div>
+
+            <!-- Current Details -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Current Quantity:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_available_poultry }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Total Eggs:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_total_eggs_collected }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Available Eggs:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_available_eggs }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Deceased Quantity:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_deceased_quantity }}</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2">
+                <span class="block text-sm font-medium text-gray-600 dark:text-gray-400">Sick Quantity:</span>
+                <span class="text-gray-800 dark:text-gray-200">{{ batch.get_sick_quantity }}</span>
+            </div>
+        </div>
+
+        <!-- Revenu -->
+        <div>
+            <h6 class="text-lg font-bold text-gray-700 dark:text-gray-300 mt-4">Revenue Details</h6>
+            <div class="space-y-1">
+                <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Revenue from Eggs:</span>
+                    <span class="text-green-600 dark:text-green-400">{{ batch.get_revenue_from_eggs|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Revenue from Poultry:</span>
+                    <span class="text-green-600 dark:text-green-400">{{ batch.get_revenue_from_poultry|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-blue-700 dark:text-blue-400">
+                    <span>Total Revenue:</span>
+                    <span>{{ batch.get_total_revenue|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                    <span>Expense:</span>
+                    <span class="text-green-600 dark:text-green-400">{{ batch.get_total_expenses|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between font-bold 
+                {% if batch.calculate_profitability.profitability < 0 %}text-red-700 dark:text-red-400
+                {% else %}text-blue-700 dark:text-blue-400
+                {% endif %}">
+                <span>Profitability:</span>
+                <span>{{ batch.calculate_profitability.profitability|floatformat:2 }}</span>
+            </div>
+            
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton "Dérouler" -->
+    <button 
+        id="toggle-details" 
+        aria-expanded="false"
+        aria-controls="batch-details"
+        class="block md:hidden w-full bg-blue-600 text-white text-center py-2 rounded-lg flex items-center justify-center space-x-2">
+        <span>Show Details</span>
+        <i class="fas fa-chevron-down"></i>
+    </button>
+</aside>
+
+<script>
+    // JavaScript pour gérer le bouton "Dérouler"
+    const toggleDetails = document.getElementById('toggle-details');
+    const details = document.getElementById('batch-details');
+
+    toggleDetails.addEventListener('click', () => {
+        const isHidden = details.classList.contains('hidden');
+        details.classList.toggle('hidden', !isHidden);
+        toggleDetails.setAttribute('aria-expanded', isHidden);
+        toggleDetails.querySelector('span').textContent = isHidden ? "Hide Details" : "Show Details";
+        toggleDetails.querySelector('i').className = isHidden ? "fas fa-chevron-up" : "fas fa-chevron-down";
+    });
+</script>

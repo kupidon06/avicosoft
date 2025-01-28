@@ -1,0 +1,75 @@
+{% extends "layouts/base-auth.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+Register
+{% endblock title %}
+
+{% block content %}
+<!-- Right Side - Register Form -->
+<div class="flex-1 flex items-center justify-center p-8">
+    <div class="w-full max-w-md space-y-8 animate-slide-in" style="animation-delay: 0.2s">
+        <!-- Logo -->
+        <div class="text-center">
+            <div class="flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <span class="text-xl font-bold text-gray-800">AvicoSoft</span>
+            </div>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Créer un compte</h2>
+        </div>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Register Form -->
+        <form class="mt-8 space-y-6" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                    </label>
+                    {{ field|add_class:"mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors" }}
+                    {% if field.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <!-- Checkbox -->
+            <div class="flex items-start">
+                <div class="flex items-center h-5">
+                    <input id="remember" name="remember" type="checkbox" class="w-4 h-4 rounded border-gray-300 bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600">
+                </div>
+                <label for="remember" class="ml-3 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    J'accepte les <a href="#" class="text-primary-600 hover:underline dark:text-primary-400">termes et conditions</a>
+                </label>
+            </div>
+
+            <!-- Button -->
+            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
+                Créer un compte
+            </button>
+
+            <!-- Link to login -->
+            <p class="text-sm text-center text-gray-500 dark:text-gray-400">
+                Vous avez déjà un compte ?
+                <a href="{% url 'login' %}" class="text-primary-600 hover:underline dark:text-primary-400">Se connecter</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock content %}

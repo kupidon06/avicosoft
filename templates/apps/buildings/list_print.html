@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page d'Affichage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <div class="max-w-4xl mx-auto p-4 bg-white shadow-sm rounded-lg">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      {% if company.logo %}
+      <img src="{{ company.logo.url }}" alt="Logo" class="mx-auto w-20 h-20 object-cover rounded-full mb-4">
+      {% endif %}
+      <h1 class="text-2xl font-bold">{{ company.name }}</h1>
+      <p class="text-sm">{{ company.address }}</p>
+      <p class="text-sm">{{ company.description }}</p>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="p-2">Image</th>
+            <th class="p-2">Nom</th>
+            <th class="p-2">Capacité</th>
+            <th class="p-2">Availibility</th>
+            <th class="p-2">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for batiment in buildings %}
+          <tr class="border-t">
+            <!-- Image -->
+            <td class="p-2 text-center">
+              {% if batiment.photo %}
+              <img src="{{ batiment.photo.url }}" alt="{{ batiment.name }}" class="w-10 h-10 object-cover rounded-full">
+              {% else %}
+              <span class="text-gray-500 italic">Aucune image</span>
+              {% endif %}
+            </td>
+            <!-- Nom -->
+            <td class="p-2">{{ batiment.name }}</td>
+            <!-- Capacité -->
+            <td class="p-2 text-center">{{ batiment.capacity }}</td>
+
+            <td class="p-2 text-center">{{ batiment.get_availability }}</td>
+            <!-- Description -->
+            <td class="p-2">{{ batiment.details }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Boutons -->
+    <div class="mt-6 flex justify-center gap-4">
+      <button 
+        class="no-print bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700" 
+        onclick="window.print()">
+        Imprimer
+      </button>
+      <button 
+        class="no-print bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" 
+        onclick="saveData()">
+        Sauvegarder
+      </button>
+      <button 
+        class="no-print bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700" 
+        onclick="goBack()">
+        Retour
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function saveData() {
+      window.save();
+    }
+
+    function goBack() {
+      // Retour à la page précédente
+      window.history.back();
+    }
+  </script>
+
+</body>
+</html>

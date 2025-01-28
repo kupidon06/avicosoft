@@ -1,0 +1,776 @@
+{% load static %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
+    <title>Responsive Product Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="{% static 'manifest.json' %}" />
+    <style>
+      /* Animation fade-in */
+      .fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+          from {
+              opacity: 0;
+              transform: translateY(10px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
+
+      /* Zone scrollable des produits */
+      .product-scroll {
+          overflow-y: auto;
+          height: calc(100vh - 9rem); /* Ajusté pour réduire l'espace entre produits et barre */
+      }
+
+      /* Barre de navigation mobile */
+      .mobile-nav {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          border-top: 1px solid #ddd;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 0.5rem 0;
+          z-index: 50;
+      }
+
+      /* Modal */
+      .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+      }
+
+      .modal.open {
+          opacity: 1;
+          pointer-events: auto;
+      }
+
+      .modal-content {
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 90%;
+          width: 500px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+      }
+
+      .modal-header h2 {
+          margin: 0;
+          font-size: 1.5rem;
+      }
+
+      .modal-header button {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+      }
+
+      /* Drawer pour le panier */
+      .drawer {
+          position: fixed;
+          right: -100%;
+          top: 0;
+          height: 100%;
+          width: 350px;
+          background: white;
+          box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+          z-index: 60;
+          overflow-y: auto;
+          transition: right 0.3s ease-in-out;
+      }
+
+      .drawer {
+          transform: translateX(100%);
+          transition: transform 0.3s ease-in-out;
+      }
+
+      .drawer.open {
+          transform: translateX(0);
+      }
+
+      /* Style du header du drawer */
+      .drawer-header {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+          background-color: #f1f0ed;
+      }
+
+      /* Taille uniforme des cartes produits */
+      .product-card {
+          height: 300px;
+      }
+
+      /* Style des éléments du panier */
+      .cart-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+      }
+
+      .cart-item img {
+          width: 60px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 50%;
+          margin-right: 10px;
+      }
+
+      .cart-item .quantity-input {
+          width: 50px;
+          text-align: center;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 5px;
+          margin: 0 10px;
+      }
+
+      .cart-item .remove-item-btn {
+          color: red;
+          cursor: pointer;
+      }
+
+      /* Styles pour le modal des ingrédients */
+      .modal-content .product-image {
+          display: block;
+          margin: 0 auto 20px;
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 50%;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-content .product-name {
+          font-size: 1.75rem;
+          font-weight: bold;
+          color: #333;
+          margin-bottom: 10px;
+      }
+
+      .modal-content .product-price {
+          font-size: 1.25rem;
+          color: #555;
+          margin-bottom: 20px;
+      }
+
+      .modal-content .ingredients-list {
+          margin-top: 20px;
+      }
+
+      .modal-content .ingredients-list h3 {
+          font-size: 1.25rem;
+          font-weight: bold;
+          color: #333;
+          margin-bottom: 10px;
+      }
+
+      .modal-content .ingredients-list ul {
+          list-style-type: none;
+          padding: 0;
+      }
+
+      .modal-content .ingredients-list ul li {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+      }
+
+      .modal-content .ingredients-list ul li img {
+          width: 40px;
+          height: 40px;
+          object-fit: cover;
+          border-radius: 50%;
+          margin-right: 10px;
+      }
+
+      .modal-content .ingredients-list ul li .ingredient-actions {
+          display: flex;
+          align-items: center;
+      }
+
+      .modal-content .ingredients-list ul li .ingredient-actions button {
+          background: none;
+          border: none;
+          font-size: 1.25rem;
+          cursor: pointer;
+          margin: 0 5px;
+      }
+
+      .modal-content .add-to-cart-btn {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          background-color: #f1f0ed;
+          color: #333;
+          border: none;
+          border-radius: 4px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+
+      .modal-content .add-to-cart-btn:hover {
+          background-color: #e0dfdd;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <!-- Conteneur principal -->
+    <div class="lg:flex lg:h-screen">
+      <!-- Sidebar pour grand écran -->
+      <aside class="hidden w-64 flex-shrink-0 flex-col bg-gray-800 text-white lg:flex">
+        <div class="flex h-screen flex-col justify-between border-e bg-white">
+          <div class="px-4 py-6">
+            <a href="/" class="ml-2 flex md:mr-24">
+              <img src="{% static 'assets/img/tasteflow.png' %}" class="mr-3 h-8" alt="tasteflow" />
+              <span class="self-center whitespace-nowrap text-xl font-semibold text-black sm:text-2xl">TasteFlow</span>
+            </a>
+            <ul class="mt-6 space-y-1">
+              <li>
+                <a href="#" class="category-link block rounded-lg px-4 py-2 text-sm font-medium text-gray-700" data-category-id="all" style="background-color: #f1f0ed;"> Tous </a>
+              </li>
+              <li>
+                {% for category in categories %}
+                <a href="#" class="category-link block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700" data-category-id="{{ category.id }}"> {{ category.name }} </a>
+                {% endfor %}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Contenu principal -->
+      <main class="flex flex-1 flex-col">
+        <!-- Catégories -->
+        <div class="category-bar flex space-x-3 overflow-x-auto px-4 py-2 shadow-md md:hidden">
+          <button class="category-link rounded-full bg-orange-100 px-4 py-2 font-medium text-orange-600 hover:bg-orange-200" data-category-id="all">Tous</button>
+          {% for category in categories %}
+          <button class="category-link rounded-full border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-orange-100" data-category-id="{{ category.id }}">{{ category.name }}</button>
+          {% endfor %}
+        </div>
+
+        <!-- Produits -->
+        <div id="product-grid" class="product-scroll grid grid-cols-2 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {% for product in products %}
+          <div class="product-card fade-in transform rounded-lg bg-white p-4 shadow-lg transition-all hover:scale-105 hover:shadow-xl" data-category-id="{{ product.category.id }}">
+            <div class="mb-3 flex h-32 items-center rounded-md bg-gray-100 object-cover">
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="my-2 h-32 w-full" />
+            </div>
+            <div class="text-gray-900">
+              <span class="text-2xl font-semibold">{{ product.price }} GNF</span>
+              <button data-product-id="{{ product.id }}" onclick="openModal({{ product.id }})">
+                {{ product.name }}
+              </button>
+            </div>
+            <button class="add-to-cart-btn mt-3 w-full rounded-lg bg-orange-100 py-2 text-gray-600 transition-colors duration-200 hover:bg-orange-200 active:bg-orange-300" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-image="{{ product.image.url }}">Ajouter au Panier</button>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+
+      <aside class="hidden rounded-lg bg-white p-6 shadow-md md:block md:w-1/3 lg:w-1/4">
+        <h2 class="mb-4 text-xl font-semibold text-gray-700">Panier</h2>
+        <div id="cart-items" class="space-y-4">
+          <!-- Cart items will be added here -->
+        </div>
+        <hr class="my-2" />
+        <div class="flex justify-between text-lg font-semibold">
+          <span>Total:</span>
+          <span id="cart-total" class="text-gray-800">0 GNF</span>
+        </div>
+        <div></div>
+        <button id="pay-btn" class="mt-4 w-full rounded-lg py-2 text-gray-800 hover:bg-blue-600" style="background-color: #f1f0ed;">Payer</button>
+        <button id="clear-cart-btn" class="mt-4 w-full rounded-lg bg-red-500 py-2 text-white hover:bg-red-600">Vider le Panier</button>
+      </aside>
+    </div>
+
+    <!-- Barre de navigation mobile -->
+    <div class="mobile-nav lg:hidden">
+      <button id="home-btn" class="flex flex-col items-center text-gray-600 hover:text-orange-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z" />
+        </svg>
+        <span class="text-xs">Accueil</span>
+      </button>
+      <button id="cart-btn" class="flex flex-col items-center text-gray-600 hover:text-orange-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18l-2 14H5L3 3z" />
+        </svg>
+        <span class="text-xs">Panier</span>
+      </button>
+    </div>
+
+    <!-- Modal pour les ingrédients -->
+    <div id="product-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="product-name"></h2>
+          <button id="close-modal" class="text-gray-600 hover:text-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div id="modal-content">
+          <img id="product-image" src="" alt="" class="product-image">
+          <h2 id="product-name" class="product-name"></h2>
+          <p id="product-price" class="product-price"></p>
+          <div id="ingredients-list" class="ingredients-list">
+            <h3>Personnaliser les ingrédients :</h3>
+            <ul id="ingredient-options"></ul>
+          </div>
+          <button id="add-to-cart-modal" class="add-to-cart-btn">Ajouter au Panier</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer pour le panier -->
+    <div id="cart-drawer" class="drawer fixed right-0 top-0 h-full w-full max-w-xs translate-x-full transform bg-white shadow-lg transition-transform duration-300 ease-in-out">
+      <!-- Drawer Header -->
+      <div class="drawer-header flex items-center justify-between border-b bg-gray-100 px-4 py-3">
+        <h2 class="text-lg font-semibold text-gray-800">Panier</h2>
+        <button id="close-cart-drawer" class="text-gray-600 hover:text-gray-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Cart Items -->
+      <div id="cart-items-phone" class="h-[calc(100%-10rem)] space-y-4 overflow-y-auto px-4 py-3">
+        <!-- Les articles du panier sont ajoutés ici via JS -->
+        <div class="text-center text-gray-500">Votre panier est vide.</div>
+      </div>
+
+      <!-- Cart Footer -->
+      <div class="border-t bg-gray-100 px-4 py-4">
+        <div class="mb-4 flex items-center justify-between">
+          <span class="text-lg font-medium text-gray-700">Total:</span>
+          <span id="cart-total-phone" class="text-xl font-semibold text-gray-800">0 GNF</span>
+        </div>
+        <button id="pay-btn-phone" class="w-full rounded-lg bg-orange-500 py-2 text-white transition hover:bg-green-600">Payer</button>
+        <button id="clear-cart-btn-phone" class="mt-3 w-full rounded-lg bg-red-500 py-2 text-white transition hover:bg-red-600">Vider le Panier</button>
+      </div>
+    </div>
+
+    <script>
+      document.querySelectorAll(".category-link").forEach(link => {
+          link.addEventListener("click", event => {
+              event.preventDefault();
+              const categoryId = link.getAttribute("data-category-id");
+              filterProductsByCategory(categoryId);
+          });
+      });
+
+      function filterProductsByCategory(categoryId) {
+          document.querySelectorAll(".product-card").forEach(product => {
+              const productCategory = product.getAttribute("data-category-id");
+              product.style.display = categoryId === "all" || productCategory === categoryId ? "block" : "none";
+          });
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+          const cart = [];
+          const cartItemsContainer = document.getElementById('cart-items');
+          const cartItemsPhoneContainer = document.getElementById('cart-items-phone');
+          const cartTotal = document.getElementById('cart-total');
+          const cartTotalPhone = document.getElementById('cart-total-phone');
+          const clearCartButton = document.getElementById('clear-cart-btn');
+          const clearCartButtonPhone = document.getElementById('clear-cart-btn-phone');
+          const payButton = document.getElementById('pay-btn');
+          const payButtonPhone = document.getElementById('pay-btn-phone');
+
+          // Add product to cart
+          document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+              button.addEventListener('click', function (e) {
+                  const productId = this.getAttribute('data-product-id');
+                  const productName = this.getAttribute('data-product-name');
+                  const productPrice = parseInt(this.getAttribute('data-product-price'));
+                  const productImage = this.getAttribute('data-product-image');
+                  const existingItem = cart.find(item => item.productId === productId);
+
+                  if (existingItem) {
+                      existingItem.quantity += 1;
+                  } else {
+                      cart.push({
+                          productId,
+                          productName,
+                          price: productPrice,
+                          quantity: 1,
+                          image: productImage
+                      });
+                  }
+
+                  updateCartUI();
+              });
+          });
+
+          // Clear the cart
+          clearCartButton.addEventListener('click', function () {
+              cart.length = 0; // Empty the cart
+              updateCartUI();
+          });
+
+          clearCartButtonPhone.addEventListener('click', function () {
+              cart.length = 0; // Empty the cart
+              updateCartUI();
+          });
+
+          // Handle payment (send the sale data to backend)
+          payButton.addEventListener('click', function () {
+              if (cart.length === 0) {
+                  alert("Votre panier est vide. Ajoutez des produits pour acheter.");
+                  return;
+              }
+
+              // Collect sale data to send to the backend
+              const saleData = {
+                  table_id: 1, // Example static value, replace as needed
+                  payment_method: 'Cash', // Replace with dynamic payment method if necessary
+                  total_amount: getTotalAmount(),
+                  sale_items: cart.map(item => ({
+                      item_id: item.productId,
+                      quantity: item.quantity,
+                      price: item.price
+                  }))
+              };
+
+              // Send the sale data to the backend
+              fetch('/sales/create/', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(saleData)
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      // Redirect to success page or show success message
+                      alert(data.message);
+                      window.location.href = data.redirect_url; // Or show a custom message
+                  } else {
+                      alert('Erreur lors de la création de la vente : ' + data.error);
+                  }
+              })
+              .catch(error => {
+                  alert('Erreur de connexion au serveur : ' + error);
+              });
+          });
+
+          payButtonPhone.addEventListener('click', function () {
+              if (cart.length === 0) {
+                  alert("Votre panier est vide. Ajoutez des produits pour acheter.");
+                  return;
+              }
+
+              // Collect sale data to send to the backend
+              const saleData = {
+                  table_id: 1, // Example static value, replace as needed
+                  payment_method: 'Cash', // Replace with dynamic payment method if necessary
+                  total_amount: getTotalAmount(),
+                  sale_items: cart.map(item => ({
+                      item_id: item.productId,
+                      quantity: item.quantity,
+                      price: item.price
+                  }))
+              };
+
+              // Send the sale data to the backend
+              fetch('/sales/create/', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(saleData)
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      // Redirect to success page or show success message
+                      alert(data.message);
+                      window.location.href = data.redirect_url; // Or show a custom message
+                  } else {
+                      alert('Erreur lors de la création de la vente : ' + data.error);
+                  }
+              })
+              .catch(error => {
+                  alert('Erreur de connexion au serveur : ' + error);
+              });
+          });
+
+          // Update the cart UI
+          function updateCartUI() {
+              cartItemsContainer.innerHTML = ''; // Clear current cart UI
+              cartItemsPhoneContainer.innerHTML = ''; // Clear current cart UI
+              let total = 0;
+
+              cart.forEach(item => {
+                  const itemElement = document.createElement('div');
+                  itemElement.className = 'cart-item';
+
+                  itemElement.innerHTML = `
+                      <div class="flex items-center">
+                          <img src="${item.image}" alt="${item.productName}" class="w-12 h-12 object-cover rounded mr-4">
+                          <span class="font-medium">${item.productName}</span>
+                      </div>
+                      <div class="flex items-center">
+                          <input type="number" class="quantity-input" value="${item.quantity}" min="1" data-product-id="${item.productId}">
+                          <span class="text-gray-600">x ${item.price} GNF</span>
+                          <button class="remove-item-btn ml-2 text-red-500" data-product-id="${item.productId}">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                          </button>
+                      </div>
+                  `;
+
+                  cartItemsContainer.appendChild(itemElement);
+                  cartItemsPhoneContainer.appendChild(itemElement.cloneNode(true));
+
+                  total += item.price * item.quantity;
+              });
+
+              cartTotal.textContent = total + ' GNF';
+              cartTotalPhone.textContent = total + ' GNF';
+
+              // Add event listeners for remove buttons
+              document.querySelectorAll('.remove-item-btn').forEach(button => {
+                  button.addEventListener('click', function () {
+                      const productId = this.getAttribute('data-product-id');
+                      removeItemFromCart(productId);
+                  });
+              });
+
+              // Add event listeners for quantity input
+              document.querySelectorAll('.quantity-input').forEach(input => {
+                  input.addEventListener('change', function () {
+                      const productId = this.getAttribute('data-product-id');
+                      const newQuantity = parseInt(this.value);
+                      updateItemQuantity(productId, newQuantity);
+                  });
+              });
+          }
+
+          // Remove item from cart
+          function removeItemFromCart(productId) {
+              const itemIndex = cart.findIndex(item => item.productId === productId);
+              if (itemIndex > -1) {
+                  cart.splice(itemIndex, 1); // Remove the item
+                  updateCartUI(); // Update the UI
+              }
+          }
+
+          // Update item quantity in cart
+          function updateItemQuantity(productId, newQuantity) {
+              const item = cart.find(item => item.productId === productId);
+              if (item) {
+                  item.quantity = newQuantity;
+                  updateCartUI(); // Update the UI
+              }
+          }
+
+          // Get total amount for the sale
+          function getTotalAmount() {
+              return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+          }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+          const cartDrawer = document.getElementById('cart-drawer');
+          const cartBtn = document.getElementById('cart-btn');
+          const closeCartDrawerBtn = document.getElementById('close-cart-drawer');
+
+          // Ouvrir le drawer du panier
+          cartBtn.addEventListener('click', function () {
+              cartDrawer.classList.add('open');
+          });
+
+          // Fermer le drawer du panier
+          closeCartDrawerBtn.addEventListener('click', function () {
+              cartDrawer.classList.remove('open');
+          });
+
+          const modal = document.getElementById('product-modal');
+          const closeModalBtn = document.getElementById('close-modal');
+
+          // Fermer le modal
+          closeModalBtn.addEventListener('click', function () {
+              modal.classList.remove('open');
+          });
+      });
+
+      // Variables pour stocker les modifications des ingrédients
+      let addedIngredients = [];
+      let removedIngredients = [];
+
+      // Ouvrir le modal et charger les informations sur le produit et les ingrédients
+      function openModal(productId) {
+          const modal = document.getElementById('product-modal');
+          const content = document.getElementById('modal-content');
+          const ingredientOptions = document.getElementById('ingredient-options');
+
+          // Réinitialiser les modifications locales
+          addedIngredients = [];
+          removedIngredients = [];
+
+          // Afficher une animation pendant le chargement
+          ingredientOptions.innerHTML = '<p class="text-gray-500 text-center">Chargement...</p>';
+
+          // Récupérer les informations sur le produit et les ingrédients via AJAX
+          fetch(`/products/ingredients/${productId}`)
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Erreur lors de la récupération des informations sur le produit.');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  // Mettre à jour les informations du produit
+                  document.getElementById('product-name').innerText = data.name;
+                  document.getElementById('product-name').setAttribute('data-product-id', data.id);
+                  document.getElementById('product-image').src = data.image;
+                  document.getElementById('product-price').innerText = `Prix : ${data.price} GNF`;
+
+                  // Générer les options des ingrédients
+                  ingredientOptions.innerHTML = data.ingredients.map(ingredient => `
+                      <li class="flex justify-between items-center">
+                          <div class="flex items-center">
+                              <img src="${ingredient.image}" alt="${ingredient.name}" class="w-12 h-12 object-cover rounded mr-4">
+                              <span class="font-medium">${ingredient.name}</span>
+                          </div>
+                          <div class="flex items-center">
+                              <button class="btn-remove" data-id="${ingredient.id}">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                              </button>
+                              <button class="btn-add" data-id="${ingredient.id}">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                  </svg>
+                              </button>
+                          </div>
+                      </li>
+                  `).join('');
+              })
+              .catch(error => {
+                  ingredientOptions.innerHTML = `<p class="text-red-500 text-center">${error.message}</p>`;
+              });
+
+          // Ouvrir le modal
+          modal.classList.add('open');
+      }
+
+      // Gérer les clics sur les boutons d'ajout/suppression
+      document.addEventListener('click', (event) => {
+          if (event.target.classList.contains('btn-add')) {
+              const ingredientId = event.target.getAttribute('data-id');
+              addedIngredients.push(parseInt(ingredientId));
+              console.log('Ingrédient ajouté :', ingredientId);
+          }
+          if (event.target.classList.contains('btn-remove')) {
+              const ingredientId = event.target.getAttribute('data-id');
+              removedIngredients.push(parseInt(ingredientId));
+              console.log('Ingrédient supprimé :', ingredientId);
+          }
+      });
+
+      // Ajouter au panier
+      document.getElementById('add-to-cart-modal').addEventListener('click', () => {
+          const productId = document.getElementById('product-name').getAttribute('data-product-id');
+          const productName = document.getElementById('product-name').innerText;
+          const productPrice = parseInt(document.getElementById('product-price').innerText.match(/\d+/)[0]);
+          const productImage = document.getElementById('product-image').src;
+          const quantity = 1; // Exemple : quantité par défaut
+
+          // Préparer les données pour la requête
+          const saleData = {
+              item_id: productId,
+              quantity: quantity,
+              added_ingredients: addedIngredients,
+              removed_ingredients: removedIngredients
+          };
+
+          fetch('/cart/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+              body: JSON.stringify(saleData)
+          })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert('Produit ajouté au panier avec succès !');
+                      closeModal();
+
+                      // Ajouter le produit au panier local
+                      const existingItem = cart.find(item => item.productId === productId);
+
+                      if (existingItem) {
+                          existingItem.quantity += quantity;
+                      } else {
+                          cart.push({
+                              productId,
+                              productName,
+                              price: productPrice,
+                              quantity,
+                              image: productImage
+                          });
+                      }
+
+                      updateCartUI();
+                  } else {
+                      alert('Erreur : ' + data.error);
+                  }
+              })
+              .catch(error => console.error('Erreur lors de l\'ajout au panier :', error));
+      });
+
+      // Fermer le modal
+      function closeModal() {
+          const modal = document.getElementById('product-modal');
+          modal.classList.remove('open');
+      }
+
+    </script>
+  </body>
+</html>

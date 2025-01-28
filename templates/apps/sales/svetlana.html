@@ -1,0 +1,557 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeux Anniversaire</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dist/base.css' %}">
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientAnimation 6s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .bubble:nth-child(1) {
+            width: 100px; height: 100px; top: 10%; left: 5%;
+            animation-duration: 8s; animation-delay: 2s;
+        }
+        .bubble:nth-child(2) {
+            width: 150px; height: 150px; top: 40%; left: 80%;
+            animation-duration: 12s; animation-delay: 3s;
+        }
+        .bubble:nth-child(3) {
+            width: 120px; height: 120px; top: 70%; left: 20%;
+            animation-duration: 10s; animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6f61, #ff4b42);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(255, 75, 66, 0.4);
+        }
+
+        .back-button {
+            margin-top: 1rem;
+            background: #444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #666;
+            transform: scale(1.05);
+        }
+
+        .image-container {
+            position: relative;
+            width: 50%;
+            height: 50%;
+            max-width: 600px;
+            margin: 2rem auto;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.1);
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s;
+        }
+
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+        }
+
+        .animation-container {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .animation-container video {
+            width: 100%;
+            height: auto;
+        }
+
+        .animation-top-left {
+            top: -50px;
+            left: -50px;
+        }
+
+        .animation-top-right {
+            top: -50px;
+            right: -50px;
+        }
+
+        .animation-bottom-left {
+            bottom: -50px;
+            left: -50px;
+        }
+
+        .animation-bottom-right {
+            bottom: -50px;
+            right: -50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+
+    <!-- Main View -->
+    <div class="view active" id="mainView">
+        <div class="text-center">
+            <div class="image-container">
+                <img src="{% static 'test.jpg' %}" alt="Creative Classes">
+            </div>
+            <h1 class="text-6xl font-bold text-white mb-4 transition-opacity duration-500" id="birthdayMessage">Joyeux Anniversaire 🎉</h1>
+            <p class="text-2xl text-white mb-6">À notre chère professeure, avec amour !</p>
+            <div>
+                <button class="button" data-lang="fr">Français</button>
+                <button class="button" data-lang="en">English</button>
+                <button class="button" data-lang="es">Español</button>
+                <button class="button" data-lang="ch">中文</button>
+                <button class="button" data-lang="vt">Việt Nam</button>
+                <button class="button" data-lang="bg">বাংলা ভাষা</button>
+                <button class="button" data-lang="ru">Русский</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Views -->
+    <div class="view" id="frView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="frVideo" width="100%" height="300"
+                        src="https://www.youtube.com/embed/SsqTa-0XS4Q?autoplay=1"
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">Un Message Spécial en Français</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    Cher(e) professeur(e), en ce jour si spécial, nous te souhaitons un joyeux anniversaire rempli de joie, de rires et de souvenirs inoubliables.
+                </p>
+                <p>
+                    Que cette nouvelle année de ta vie soit riche en bonheur et succès ! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">Retour</button>
+    </div>
+
+    <div class="view" id="enView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="enVideo" width="100%" height="300" src="https://www.youtube.com/embed/6MYdXlKilMA?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">A Special Message in English</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    Dear teacher, on this special day, we wish you a happy birthday filled with joy, laughter, and unforgettable memories.
+                </p>
+                <p>
+                    May this new year of your life be filled with happiness and success! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">Back</button>
+    </div>
+
+    <div class="view" id="esView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="esVideo" width="100%" height="300" src="https://www.youtube.com/embed/F3YSa-fnu3E?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">Un Mensaje Especial en Español</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    Querido(a) profesor(a), en este día tan especial, te deseamos un feliz cumpleaños lleno de alegría, risas y recuerdos inolvidables.
+                </p>
+                <p>
+                    ¡Que este nuevo año de tu vida esté lleno de felicidad y éxito! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">Volver</button>
+    </div>
+
+    <div class="view" id="chView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="chVideo" width="100%" height="300" src="https://www.youtube.com/embed/n4iWaZrRAl8?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">生日快乐的特别信息</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    亲爱的老师，在这个特别的日子里，我们祝你生日快乐，充满喜悦、欢笑和难忘的回忆。
+                </p>
+                <p>
+                    愿你的新一年充满幸福和成功！🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">返回</button>
+    </div>
+
+    <div class="view" id="vtView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="vtVideo" width="100%" height="300" src="https://www.youtube.com/embed/PlZHUQiyrk0?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">Một Lời Chúc Đặc Biệt bằng Tiếng Việt</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    Thân yêu thầy cô, trong ngày đặc biệt này, chúng tôi chúc mừng sinh nhật của thầy cô đầy niềm vui, cười và những kỷ niệm khó quên.
+                </p>
+                <p>
+                    Mong năm mới của thầy cô đầy hạnh phúc và thành công! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">Quay lại</button>
+    </div>
+
+    <div class="view" id="bgView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="bgVideo" width="100%" height="300" src="https://www.youtube.com/embed/QzUaa4N1ye4?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">বাংলা ভাষায় একটি বিশেষ বার্তা</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    প্রিয় শিক্ষক, এই বিশেষ দিনে, আমরা আপনাকে আনন্দ, হাসি এবং অবিস্মরণীয় স্মৃতি ভরপুর একটি জন্মদিনের শুভেচ্ছা জানাই।
+                </p>
+                <p>
+                    আপনার নতুন বছর সুখ-সমৃদ্ধ ও সফল হোক! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">ফিরে যান</button>
+    </div>
+
+    <div class="view" id="ruView">
+        <div class="card">
+            <div class="animation-container animation-top-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-top-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-left">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="animation-container animation-bottom-right">
+                <video autoplay loop muted>
+                    <source src="{% static 'Animation - 1732830263831.webm' %}" type="video/webm">
+                </video>
+            </div>
+            <div class="video-container">
+                <iframe id="ruVideo" width="100%" height="300" src="https://www.youtube.com/embed/fW-fVtTN_BA?si=XNT0k0cMmm315P-U?autoplay=1" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="text-container">
+                <h2 class="text-3xl font-bold">Специальное сообщение на русском языке</h2>
+                <p class="mt-4">
+                    <span class="emoji">🎂</span>
+                    Дорогой преподаватель, в этот особенный день мы желаем вам счастливого дня рождения, полного радости, смеха и незабываемых воспоминаний.
+                </p>
+                <p>
+                    Пусть ваш новый год будет наполнен счастьем и успехом! 🥳💖
+                </p>
+                <img src="https://img.icons8.com/emoji/96/party-popper-emoji.png" alt="Party" class="illustration">
+            </div>
+        </div>
+        <button class="back-button" data-target="mainView">Назад</button>
+    </div>
+
+    <script>
+        const mainView = document.getElementById("mainView");
+        const views = {
+            fr: document.getElementById("frView"),
+            en: document.getElementById("enView"),
+            es: document.getElementById("esView"),
+            ch: document.getElementById("chView"),
+            vt: document.getElementById("vtView"),
+            bg: document.getElementById("bgView"),
+            ru: document.getElementById("ruView")
+        };
+
+        const birthdayMessage = document.getElementById("birthdayMessage");
+        const messages = [
+            "Joyeux Anniversaire 🎉",
+            "Happy Birthday 🎉",
+            "Feliz Cumpleaños 🎉",
+            "生日快乐 🎉",
+            "Chúc Mừng Sinh Nhật 🎉",
+            "জন্মদিনের শুভেচ্ছা 🎉",
+            "С днём рождения 🎉"
+        ];
+
+        let currentIndex = 0;
+
+        function changeMessage() {
+            birthdayMessage.classList.add('fade-leave-active');
+            setTimeout(() => {
+                birthdayMessage.textContent = messages[currentIndex];
+                birthdayMessage.classList.remove('fade-leave-active');
+                birthdayMessage.classList.add('fade-enter-active');
+                currentIndex = (currentIndex + 1) % messages.length;
+            }, 500);
+        }
+
+        setInterval(changeMessage, 2000);
+
+        document.querySelectorAll(".button").forEach(button => {
+            button.addEventListener("click", () => {
+                const lang = button.getAttribute("data-lang");
+                mainView.classList.remove("active");
+                views[lang]?.classList.add("active");
+            });
+        });
+
+        document.querySelectorAll(".back-button").forEach(button => {
+            button.addEventListener("click", () => {
+                mainView.classList.add("active");
+                Object.values(views).forEach(view => view.classList.remove("active"));
+
+                // Mute the videos
+                const frVideo = document.getElementById("frVideo");
+                const enVideo = document.getElementById("enVideo");
+                const esVideo = document.getElementById("esVideo");
+                const chVideo = document.getElementById("chVideo");
+                const vtVideo = document.getElementById("vtVideo");
+                const bgVideo = document.getElementById("bgVideo");
+                const ruVideo = document.getElementById("ruVideo");
+
+                if (frVideo) frVideo.src = frVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (enVideo) enVideo.src = enVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (esVideo) esVideo.src = esVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (chVideo) chVideo.src = chVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (vtVideo) vtVideo.src = vtVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (bgVideo) bgVideo.src = bgVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+                if (ruVideo) ruVideo.src = ruVideo.src.replace("autoplay=1", "autoplay=1&mute=1");
+            });
+        });
+    </script>
+</body>
+</html>

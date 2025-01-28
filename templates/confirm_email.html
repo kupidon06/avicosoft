@@ -1,0 +1,7 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Confirmation de l'email</h1>
+  <p>Merci pour votre inscription. Veuillez confirmer votre adresse email en cliquant sur le lien suivant.</p>
+  <a href="{{ confirmation.get_confirm_url }}">Confirmer mon email</a>
+{% endblock %}

@@ -1,0 +1,7 @@
+asgiref==3.7.2
+Django==5.0
+django-filter==23.5
+Pillow==10.1.0
+python-environ==0.4.54
+sqlparse==0.4.4
+tzdata==2023.4

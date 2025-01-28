@@ -1,0 +1,247 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+  <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">Dashboard de Gestion des Lots</h1>
+
+  <!-- Formulaire de filtrage -->
+  <form id="filter-form" class="mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div>
+        <label for="from" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date de début</label>
+        <input type="date" id="from" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date de fin</label>
+        <input type="date" id="to" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="building_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Bâtiment</label>
+        <input type="text" id="building_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="batch_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lot</label>
+        <select id="batch_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          {% for batch in batches %}
+          <option value="{{ batch.id }}">{{ batch.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="mt-6 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          Filtrer
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Statistiques générales -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h2 class="text-gray-600 dark:text-gray-300 text-sm">Total Poulets Actuels</h2>
+      <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="total-chickens">0</p>
+      <div class="loader" id="total-chickens-loader"></div>
+    </div>
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h2 class="text-gray-600 dark:text-gray-300 text-sm">Total Œufs Collectés</h2>
+      <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="total-eggs">0</p>
+      <div class="loader" id="total-eggs-loader"></div>
+    </div>
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h2 class="text-gray-600 dark:text-gray-300 text-sm">Revenu Total (FCFA)</h2>
+      <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="total-revenue">0</p>
+      <div class="loader" id="total-revenue-loader"></div>
+    </div>
+    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h2 class="text-gray-600 dark:text-gray-300 text-sm">Taux de Mortalité</h2>
+      <p class="text-2xl font-bold text-gray-900 dark:text-gray-100" id="mortality-rate">0%</p>
+      <div class="loader" id="mortality-rate-loader"></div>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Mortalité et Œufs -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow" style="height: 300px;">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Mortalité et Collecte d'Œufs</h3>
+      <canvas id="mortalityEggsChart" style="max-height: 250px;"></canvas>
+      <div class="loader" id="mortalityEggsChart-loader"></div>
+    </div>
+
+    <!-- Rentabilité mensuelle -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow" style="height: 300px;">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Rentabilité Mensuelle</h3>
+      <canvas id="profitabilityChart" style="max-height: 250px;"></canvas>
+      <div class="loader" id="profitabilityChart-loader"></div>
+    </div>
+  </div>
+
+  <!-- Détails des lots -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Détails des Lots</h3>
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300" id="batch-details">
+      <thead class="text-xs text-gray-700 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-700">
+        <tr>
+          <th scope="col" class="px-6 py-3">Nom du Lot</th>
+          <th scope="col" class="px-6 py-3">Race</th>
+          <th scope="col" class="px-6 py-3">Bâtiment</th>
+          <th scope="col" class="px-6 py-3">Quantité Actuelle</th>
+          <th scope="col" class="px-6 py-3">Œufs Collectés</th>
+          <th scope="col" class="px-6 py-3">Revenu Total</th>
+          <th scope="col" class="px-6 py-3">Taux de Mortalité</th>
+          <th scope="col" class="px-6 py-3">Taux de Ponte</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Les données seront remplies dynamiquement -->
+      </tbody>
+    </table>
+    <div class="loader" id="batch-details-loader"></div>
+  </div>
+</div>
+
+<script>
+  // Fonction pour charger les données depuis l'API
+  async function fetchData(filters = {}) {
+    let url = '/management/batch-statistics/';
+    const queryParams = new URLSearchParams(filters).toString();
+    if (queryParams) {
+      url += `?${queryParams}`;
+    }
+
+    const response = await fetch(url);
+    return await response.json();
+  }
+
+  // Rendre les graphiques avec les données
+  function renderChart(chartId, labels, data, label) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: data,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  // Afficher les statistiques générales
+  function updateStatistics(batchData) {
+    document.getElementById('total-chickens').textContent = batchData.reduce((sum, batch) => sum + batch.current_poultry, 0);
+    document.getElementById('total-eggs').textContent = batchData.reduce((sum, batch) => sum + batch.total_eggs_collected, 0);
+    document.getElementById('total-revenue').textContent = batchData.reduce((sum, batch) => sum + batch.total_revenue, 0);
+    document.getElementById('mortality-rate').textContent = (batchData.reduce((sum, batch) => sum + batch.mortality_rate, 0) / batchData.length).toFixed(2) + '%';
+  }
+
+  // Afficher les détails des lots
+  function updateBatchDetails(batchData) {
+    const tbody = document.getElementById('batch-details').querySelector('tbody');
+    tbody.innerHTML = '';
+    batchData.forEach(batch => {
+      const row = document.createElement('tr');
+      row.classList.add('bg-white', 'dark:bg-gray-700', 'border-b');
+      row.innerHTML = `
+        <td class="px-6 py-4">${batch.name}</td>
+        <td class="px-6 py-4">${batch.breed}</td>
+        <td class="px-6 py-4">${batch.building}</td>
+        <td class="px-6 py-4">${batch.current_poultry}</td>
+        <td class="px-6 py-4">${batch.total_eggs_collected}</td>
+        <td class="px-6 py-4">${batch.total_revenue} FCFA</td>
+        <td class="px-6 py-4">${batch.mortality_rate}%</td>
+        <td class="px-6 py-4">${batch.laying_rate}%</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Charger les données dès l'arrivée sur la page
+  async function loadInitialData() {
+    showLoaders();
+    const data = await fetchData();
+    hideLoaders();
+    const labels = data.map(batch => batch.name);
+    const mortalityRates = data.map(batch => batch.mortality_rate);
+    const layingRates = data.map(batch => batch.laying_rate);
+    const revenues = data.map(batch => batch.total_revenue);
+
+    renderChart('mortalityEggsChart', labels, mortalityRates, 'Taux de Mortalité');
+    renderChart('profitabilityChart', labels, revenues, 'Revenu Total');
+    updateStatistics(data);
+    updateBatchDetails(data);
+  }
+
+  // Charger les données lorsque la page est prête
+  window.onload = loadInitialData;
+
+  // Filtrer les données lors de la soumission du formulaire
+  document.getElementById('filter-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const filters = {
+      from: document.getElementById('from').value,
+      to: document.getElementById('to').value,
+      building_id: document.getElementById('building_id').value,
+      batch_id: document.getElementById('batch_id').value
+    };
+
+    showLoaders();
+    const filteredData = await fetchData(filters);
+    hideLoaders();
+
+    const labels = filteredData.map(batch => batch.name);
+    const mortalityRates = filteredData.map(batch => batch.mortality_rate);
+    const layingRates = filteredData.map(batch => batch.laying_rate);
+    const revenues = filteredData.map(batch => batch.total_revenue);
+
+    renderChart('mortalityEggsChart', labels, mortalityRates, 'Taux de Mortalité');
+    renderChart('profitabilityChart', labels, revenues, 'Revenu Total');
+    updateStatistics(filteredData);
+    updateBatchDetails(filteredData);
+  });
+
+  // Fonctions pour afficher et masquer les loaders
+  function showLoaders() {
+    document.querySelectorAll('.loader').forEach(loader => loader.style.display = 'block');
+  }
+
+  function hideLoaders() {
+    document.querySelectorAll('.loader').forEach(loader => loader.style.display = 'none');
+  }
+</script>
+
+<style>
+  .loader {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 24px;
+    height: 24px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+{% endblock content %}

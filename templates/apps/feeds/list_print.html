@@ -1,0 +1,33 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Name</th>
+          <th style="padding: 8px; text-align: left;">Description</th>
+          <th style="padding: 8px; text-align: left;">Unit Price</th>
+          <th style="padding: 8px; text-align: left;">Unit Measure</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in feeds%}
+        <tr style="background-color: #ffffff;">
+         
+            <!-- Nom -->
+          <td style="padding: 8px;">{{ log.name }}</td>
+         
+          <!-- Capacité -->
+          <td style="padding: 8px; text-align: center;">{{ log.description }}</td>
+          <!-- Description -->
+          
+          <td style="padding: 8px;">{{ log.unit_price }}</td>
+        
+          <td style="padding: 8px;">{{ log.unit_measure }}</td>
+          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

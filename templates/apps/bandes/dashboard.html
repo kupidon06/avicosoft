@@ -1,0 +1,309 @@
+{% extends "layouts/base.html" %}
+
+{% block extra_css %}
+<style>
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center py-4">
+            <div>
+                <button type="button" class="btn btn-secondary d-inline-flex align-items-center me-2" data-bs-toggle="modal" data-bs-target="#createBandeModal">
+                    <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Créer
+                </button>
+                <a href="{% url 'race-list' %}" class="btn btn-outline-secondary me-2">
+                    Race
+                </a>
+            </div>
+            <div>
+                <form method="get" class="d-flex align-items-center">
+                    <input type="text" name="nom" id="nom" class="form-control me-2" placeholder="Nom" value="{{ request.GET.nom }}">
+                    <input type="date" name="date_min" id="date_min" class="form-control me-2" placeholder="Date Min" value="{{ request.GET.date_min }}">
+                    <input type="date" name="date_max" id="date_max" class="form-control me-2" placeholder="Date Max" value="{{ request.GET.date_max }}">
+                    <button type="submit" class="btn btn-secondary">Filtrer</button>
+                </form>
+                
+            </div>
+        </div>
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                <h2 class="h5 mb-4">Liste des Lot</h2>
+                <div class="table-responsive">
+                    <table class="table table-centered table-nowrap mb-0 rounded">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="border-0">Nom</th>
+                                <th class="border-0">Race</th>
+                                <th class="border-0">Date d'arrivée</th>
+                                <th class="border-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bande in bandes %}
+                            <tr>
+                                <td>{{ bande.nom }}</td>
+                                <td>{{ bande.race.nom }}</td>
+                                <td>{{ bande.date_arrivee }}</td>
+                                <td>
+                                    <div>
+                                        <a href="{% url 'journalisation-list' bande.id %}" class="btn btn-outline-primary me-2">Journalisation</a>
+                                        <a href="{% url 'alimentation-list' bande.id %}" class="btn btn-outline-danger me-2">Alimentation</a>
+                                        <a href="{% url 'ramassage-list' bande.id %}" class="btn btn-outline-tertiary me-2">Ramassage</a>
+                                        <a href="{% url 'historique-traitement-list' bande.id %}" class="btn btn-outline-success me-2">Traitement</a>
+                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#bandeDetailsModal{{ bande.id }}">Détails</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Modal pour les détails de la bande -->
+                            <div class="modal fade" id="bandeDetailsModal{{ bande.id }}" tabindex="-1" aria-labelledby="bandeDetailsModalLabel{{ bande.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="bandeDetailsModalLabel{{ bande.id }}">Détails de la bande</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                {% if bande.race.photo %}
+                                                <img src="{{ bande.race.photo.url }}" alt="{{ bande.race.nom }}" class="me-3" style="max-width: 100px;">
+                                                {% else %}
+                                                <div class="me-3" style="width: 100px; height: 100px; background-color: #f0f0f0;"></div>
+                                                {% endif %}
+                                                <div>
+                                                    <p><strong>Nom :</strong> {{ bande.nom }}</p>
+                                                    <p><strong>Race :</strong> {{ bande.race.nom }}</p>
+                                                    <p><strong>Date d'arrivée :</strong> {{ bande.date_arrivee }}</p>
+                                                    <p><strong>Âge actuel :</strong> <span id="ageActuel{{ bande.id }}"></span> jours</p>
+                                                    <p><strong>Âge à l'arrivée :</strong> {{ bande.age_arrivee }}</p>
+                                                    <p><strong>Nombre à l'arrivée :</strong> {{ bande.nombre_arrivee }}</p>
+                                                    <p><strong>Nombre actuel :</strong> {{ bande.nombre_actuel }}</p>
+                                                    <p><strong>Nombre de décès :</strong> {{ bande.nombre_deces }}</p>
+                                                    <p><strong>Nombre malades :</strong> {{ bande.nombre_malade }}</p>
+                                                    <p><strong>Traitement imminent :</strong> {{ bande.traitement_imminent }}</p>
+                                                    <p><strong>Total d'œufs :</strong> {{ bande.total_oeuf }}</p>
+                                                    <p><strong>Détails :</strong> {{ bande.details }}</p>
+                                                    <a href="{% url 'bande-update' bande.id %}" class="btn btn-success">Modifier</a>
+                                                    <a href="{% url 'bande-delete' bande.id %}" class="btn btn-danger">Supprimer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">Aucune bande trouvée.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de création -->
+<div class="modal fade" id="createBandeModal" tabindex="-1" aria-labelledby="createBandeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createBandeModalLabel">Créer un nouveau Lot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'bande-list' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.nom.label_tag }}
+                                {{ create_form.nom }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.race.label_tag }}
+                                {{ create_form.race }}
+                                <a href="{% url 'race-list' %}" class="link-primary">
+                                    <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </a>
+                                {% if create_form.race.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.race.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.batiment.label_tag }}
+                                {{ create_form.batiment }}
+                                <a href="{% url 'batiment-list' %}" class="link-primary">
+                                    <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </a>
+                                {% if create_form.batiment.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.batiment.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.date_arrivee.label_tag }}
+                                {{ create_form.date_arrivee }}
+                                {% if create_form.date_arrivee.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.date_arrivee.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.age_arrivee.label_tag }} en jours
+                                {{ create_form.age_arrivee }}
+                                {% if create_form.age_arrivee.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.age_arrivee.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.nombre_arrivee.label_tag }}
+                                {{ create_form.nombre_arrivee }}
+                                {% if create_form.nombre_arrivee.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.nombre_arrivee.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.nombre_deces.label_tag }}
+                                {{ create_form.nombre_deces }}
+                                {% if create_form.nombre_deces.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.nombre_deces.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.nombre_malade.label_tag }}
+                                {{ create_form.nombre_malade }}
+                                {% if create_form.nombre_malade.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.nombre_malade.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ create_form.traitement_imminent.label_tag }}
+                                {{ create_form.traitement_imminent }}
+                                {% if create_form.traitement_imminent.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.traitement_imminent.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                {{ create_form.details.label_tag }}
+                                {{ create_form.details }}
+                                {% if create_form.details.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in create_form.details.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-gray-800 mt-2 animate-up-2" type="submit">Enregistrer</button>
+                        <a href="{% url 'bande-list' %}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function convertirDate(dateStr) {
+            var mois = {
+                "janvier": 0, "février": 1, "mars": 2, "avril": 3, "mai": 4, "juin": 5,
+                "juillet": 6, "août": 7, "septembre": 8, "octobre": 9, "novembre": 10, "décembre": 11
+            };
+            var dateParts = dateStr.split(' ');
+            var jour = parseInt(dateParts[0]);
+            var moisNum = mois[dateParts[1].toLowerCase()];
+            var annee = parseInt(dateParts[2]);
+            return new Date(annee, moisNum, jour);
+        }
+
+        function calculerAgeActuel(dateArriveeStr) {
+            var dateArrivee = convertirDate(dateArriveeStr);
+            if (isNaN(dateArrivee.getTime())) {
+                console.error('Date d\'arrivée invalide:', dateArriveeStr);
+                return 'Date invalide';
+            }
+            var aujourdHui = new Date();
+            var difference = aujourdHui.getTime() - dateArrivee.getTime();
+            var ageEnJours = Math.floor(difference / (1000 * 3600 * 24));
+            return ageEnJours;
+        }
+
+        {% for bande in bandes %}
+        var ageActuel{{ bande.id }} = calculerAgeActuel('{{ bande.date_arrivee }}');
+        var ageActuelSpan{{ bande.id }} = document.getElementById('ageActuel{{ bande.id }}');
+        if (ageActuelSpan{{ bande.id }}) {
+            ageActuelSpan{{ bande.id }}.textContent = ageActuel{{ bande.id }}.toString();
+        }
+        {% endfor %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,3 @@
+document.addEventListener('DOMContentLoaded',function(){function convertirDate(dateStr){var mois={"janvier":0,"février":1,"mars":2,"avril":3,"mai":4,"juin":5,"juillet":6,"août":7,"septembre":8,"octobre":9,"novembre":10,"décembre":11};var dateParts=dateStr.split(' ');var jour=parseInt(dateParts[0]);var moisNum=mois[dateParts[1].toLowerCase()];var annee=parseInt(dateParts[2]);return new Date(annee,moisNum,jour);}
+function calculerAgeActuel(dateArriveeStr){var dateArrivee=convertirDate(dateArriveeStr);if(isNaN(dateArrivee.getTime())){console.error('Date d\'arrivée invalide:',dateArriveeStr);return'Date invalide';}
+var aujourdHui=new Date();var difference=aujourdHui.getTime()-dateArrivee.getTime();var ageEnJours=Math.floor(difference/(1000*3600*24));return ageEnJours;}});;

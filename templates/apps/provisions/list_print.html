@@ -1,0 +1,33 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Date</th>
+          <th style="padding: 8px; text-align: left;">Supplier</th>
+          <th style="padding: 8px; text-align: left;">Feed</th>
+          <th style="padding: 8px; text-align: left;">Quantity</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        {% for provision in provisions%}
+        <tr style="background-color: #ffffff;">
+          <!-- Date -->
+          <td style="padding: 8px;">{{ provision.provision_date }}</td>
+            <!-- Nom -->
+          <td style="padding: 8px;">{{ provision.supplier.name }}</td>
+         
+          <!-- Capacité -->
+          <td style="padding: 8px; text-align: center;">{{ provision.feed }}</td>
+          <!-- Description -->
+          
+          <td style="padding: 8px;">{{ provision.quantity }}</td>
+        
+          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

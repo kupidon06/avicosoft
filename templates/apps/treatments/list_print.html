@@ -1,0 +1,31 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Treatment</th>
+          <th style="padding: 8px; text-align: left;">Description</th>
+          <th style="padding: 8px; text-align: left;">Duration Days</th>
+         
+        </tr>
+      </thead>
+      
+      <tbody>
+        {% for treatment in treatments%}
+        <tr style="background-color: #ffffff;">
+          <!-- Date -->
+          <td style="padding: 8px;">{{ treatment.name }}</td>
+            <!-- Nom -->
+          <td style="padding: 8px;">{{ treatment.description }}</td>
+         
+          <!-- Capacité -->
+          <td style="padding: 8px; text-align: center;">{{ treatment.duration_days }}</td>
+       
+        
+          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

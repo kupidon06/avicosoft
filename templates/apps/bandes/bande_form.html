@@ -1,0 +1,159 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<style>
+    /* CSS personnalisé pour ajuster la hauteur du champ details */
+    textarea#id_details {
+        height: 150px; /* Ajustez la hauteur selon vos besoins */
+        resize: vertical; /* Permet à l'utilisateur de redimensionner verticalement le champ */
+    }
+
+    /* Ajustement de la taille des colonnes sur les écrans XL */
+    @media (min-width: 1200px) {
+        .col-xl-10 {
+            flex: 0 0 80%; /* Reduire la largeur de la colonne pour faire de l'espace */
+        }
+        .col-xl-2 {
+            flex: 0 0 20%; /* Augmenter la largeur de la colonne pour prendre plus de l'espace */
+        }
+    }
+</style>
+<div class="row">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+  </div>
+    <div class="col-12 col-xl-10">
+        <div class="card card-body border-0 shadow mb-4">
+            <h2 class="h5 mb-4">Creation d'une bande</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form.nom.label_tag }}
+                        {{ form.nom }}
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                          {{ form.race.label_tag }}
+                          {{ form.race }}
+                          <a href="{% url 'race-list' %}" class="link-primary">
+                              
+                              <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                                </path>
+                              </svg>
+                          </a>
+                          {% if form.race.errors %}
+                              <div class="invalid-feedback">
+                                  {% for error in form.race.errors %}
+                                      <div>{{ error }}</div>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+                      </div>
+                  </div>
+                  
+                    <div class="col-md-6">
+                        {{ form.batiment.label_tag }}
+                        {{ form.batiment }}
+                        <a href="{% url 'race-list' %}" class="link-primary">
+                              
+                          <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                            </path>
+                          </svg>
+                      </a>
+                        {% if form.batiment.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.batiment.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.date_arrivee.id_for_label }}" class="form-label">{{ form.date_arrivee.label }}</label>
+                        <input type="date" id="{{ form.date_arrivee.id_for_label }}" name="{{ form.date_arrivee.name }}" value="{{ form.instance.date_arrivee|date:'Y-m-d' }}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.age_arrivee.label_tag }} en jours
+                        {{ form.age_arrivee }}
+                        {% if form.age_arrivee.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.age_arrivee.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.nombre_arrivee.label_tag }}
+                        {{ form.nombre_arrivee }}
+                        {% if form.nombre_arrivee.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.nombre_arrivee.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {{ form.nombre_deces.label_tag }}
+                        {{ form.nombre_deces }}
+                        {% if form.nombre_deces.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.nombre_deces.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.nombre_malade.label_tag }}
+                        {{ form.nombre_malade }}
+                        {% if form.nombre_malade.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.nombre_malade.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.traitement_imminent.label_tag }}
+                        {{ form.traitement_imminent }}
+                        {% if form.traitement_imminent.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.traitement_imminent.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                   
+                    <div class="col-12">
+                        {{ form.details.label_tag }}
+                        {{ form.details }}
+                        {% if form.details.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.details.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-gray-800 mt-2 animate-up-2" type="submit">Enregistrer</button>
+                    <a href="{% url 'bande-list' %}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-12 col-xl-2">
+        
+    </div>
+</div>
+
+{% endblock %}

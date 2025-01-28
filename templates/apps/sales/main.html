@@ -1,0 +1,81 @@
+<main class="flex-1 p-4 overflow-auto md:flex md:space-x-4 lg:p-6 lg:space-x-8">
+    <!-- Product List -->
+    <section class="flex-1">
+        <h2 class="text-2xl font-semibold text-gray-600 mb-6">Produits</h2>
+        <div id="product-grid" class="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+            {% for product in products %}
+                <div class="rounded-lg shadow-lg hover:shadow-2xl p-3 transform hover:scale-105 transition product-item" 
+                     data-category-id="{{ product.category.id }}" style="background-color: #f1f0ed;">
+                    <div class="bg-white flex items-center justify-center object-cover rounded-md overflow-hidden mb-3" 
+                         style="height: 180px;">
+                        <img src="{{ product.image.url }}" alt="Produit" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col items-start space-y-1">
+                        <span class="text-gray-900 text-xl font-semibold">{{ product.price }} GNF</span>
+                        <h3 class="text-lg text-gray-800 font-medium">{{ product.name }}</h3>
+                    </div>
+                    <button class="mt-4 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-300 hover:text-white 
+                                   add-to-cart-btn transition duration-300" 
+                            data-product-id="{{ product.id }}" 
+                            data-product-name="{{ product.name }}" 
+                            data-product-price="{{ product.price }}" 
+                            data-product-image="{{ product.image.url }}">Ajouter au Panier
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Cart -->
+    <section class="hidden md:block bg-white p-6 rounded-lg shadow-lg md:w-1/3 lg:w-1/4">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-700">Panier</h2>
+        <div id="cart-items" class="space-y-4">
+            <!-- Cart items will be added here -->
+        </div>
+        <hr class="my-4">
+        <div class="flex justify-between text-lg font-semibold text-gray-700">
+            <span>Total:</span>
+            <span id="cart-total" class="text-gray-800">0 GNF</span>
+        </div>
+        <button id="pay-btn" class="mt-4 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-blue-500 hover:text-white 
+                       transition duration-300">Payer
+        </button>
+        <button id="clear-cart-btn" class="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 
+                       transition duration-300">Vider le Panier
+        </button>
+    </section>
+
+    <!-- Mobile Cart Button -->
+    <button class="mt-4 w-full md:hidden bg-yellow-300 text-black py-2 rounded-lg hover:bg-yellow-400 transition 
+                   duration-300" type="button" data-drawer-target="drawer-cart" data-drawer-show="drawer-cart" 
+                   aria-controls="drawer-cart" data-drawer-placement="right">Voir le panier
+    </button>
+
+    <!-- Mobile Cart Drawer -->
+    <div id="drawer-cart" class="fixed top-0 right-0 z-40 w-full h-screen max-w-xs p-6 overflow-y-auto transform 
+                               translate-x-full transition-transform bg-white dark:bg-gray-800" tabindex="-1" 
+         aria-labelledby="drawer-label" aria-hidden="true">
+        <div class="flex items-center justify-between mb-6">
+            <h5 id="drawer-label" class="text-lg font-semibold text-gray-700 uppercase">Panier</h5>
+            <button type="button" class="text-gray-500 hover:text-red-500" data-drawer-hide="drawer-cart">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="cart-items-drawer" class="space-y-4">
+            <!-- Cart items for mobile will be added here -->
+        </div>
+        <hr class="my-4">
+        <div class="flex justify-between text-lg font-semibold text-gray-700">
+            <span>Total:</span>
+            <span id="cart-total-drawer" class="text-gray-800">0 GNF</span>
+        </div>
+        <button id="pay-btn-drawer" class="mt-4 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-blue-500 
+                         hover:text-white transition duration-300">Payer
+        </button>
+        <button id="clear-cart-btn-drawer" class="mt-4 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 
+                         transition duration-300">Vider le Panier
+        </button>
+    </div>
+</main>

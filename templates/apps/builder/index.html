@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagebuilder Drag-and-Drop</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #editor .selected {
+      border: 2px dashed #3b82f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 h-screen">
+
+  <div class="flex h-full">
+    <!-- Sidebar -->
+    <aside class="w-1/4 bg-white border-r p-4 shadow-md">
+      <h2 class="text-xl font-bold mb-4">Widgets</h2>
+      <div class="space-y-4">
+        <div class="widget bg-blue-100 p-3 text-center cursor-move" draggable="true" data-type="text">Texte</div>
+        <div class="widget bg-green-100 p-3 text-center cursor-move" draggable="true" data-type="image">Image</div>
+        <div class="widget bg-yellow-100 p-3 text-center cursor-move" draggable="true" data-type="button">Bouton</div>
+        <div class="widget bg-purple-100 p-3 text-center cursor-move" draggable="true" data-type="grid-2">Grille 2 colonnes</div>
+        <div class="widget bg-red-100 p-3 text-center cursor-move" draggable="true" data-type="flex-container">Conteneur Flex</div>
+      </div>
+    </aside>
+
+    <!-- Editor -->
+    <main class="flex-1 p-6">
+      <h2 class="text-xl font-bold mb-4">Zone d'édition</h2>
+      <div id="editor" class="bg-gray-50 border-2 border-dashed border-gray-400 h-full p-4 relative">
+        <!-- Drop Zone -->
+      </div>
+    </main>
+
+    <!-- Style Editor -->
+    <aside id="style-editor" class="w-1/4 bg-white border-l p-4 shadow-md hidden">
+      <h2 class="text-xl font-bold mb-4">Éditeur de styles</h2>
+      <form id="style-form" class="space-y-4">
+        <div>
+          <label for="bg-color" class="block text-sm font-medium">Couleur de fond</label>
+          <input type="color" id="bg-color" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label for="margin" class="block text-sm font-medium">Marge (px)</label>
+          <input type="number" id="margin" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label for="text-align" class="block text-sm font-medium">Alignement texte</label>
+          <select id="text-align" class="w-full border rounded p-2">
+            <option value="left">Gauche</option>
+            <option value="center">Centré</option>
+            <option value="right">Droite</option>
+          </select>
+        </div>
+        <button type="button" id="apply-style" class="bg-blue-500 text-white px-4 py-2 rounded">Appliquer</button>
+      </form>
+    </aside>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const widgets = document.querySelectorAll('.widget');
+      const editor = document.getElementById('editor');
+      const styleEditor = document.getElementById('style-editor');
+      const bgColorInput = document.getElementById('bg-color');
+      const marginInput = document.getElementById('margin');
+      const textAlignInput = document.getElementById('text-align');
+      const applyStyleButton = document.getElementById('apply-style');
+      let selectedElement = null;
+
+      // Drag-and-Drop logic
+      widgets.forEach(widget => {
+        widget.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('type', e.target.dataset.type);
+        });
+      });
+
+      editor.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      editor.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const type = e.dataTransfer.getData('type');
+        const newElement = createWidget(type);
+        editor.appendChild(newElement);
+        selectElement(newElement);
+      });
+
+      // Create a widget based on type
+      function createWidget(type) {
+        const element = document.createElement('div');
+        element.classList.add('widget', 'p-4', 'border', 'cursor-pointer');
+        element.setAttribute('data-type', type);
+
+        switch (type) {
+          case 'text':
+            element.textContent = 'Texte';
+            break;
+          case 'image':
+            element.innerHTML = '<img src="https://via.placeholder.com/150" alt="Image" class="w-full">';
+            break;
+          case 'button':
+            element.innerHTML = '<button class="bg-blue-500 text-white px-4 py-2 rounded">Bouton</button>';
+            break;
+          case 'grid-2':
+            element.classList.add('grid', 'grid-cols-2', 'gap-2');
+            element.innerHTML = '<div class="bg-gray-200 h-16"></div><div class="bg-gray-200 h-16"></div>';
+            break;
+          case 'flex-container':
+            element.classList.add('flex', 'gap-2');
+            element.innerHTML = '<div class="bg-gray-200 flex-1 h-16"></div><div class="bg-gray-200 flex-1 h-16"></div>';
+            break;
+        }
+
+        element.addEventListener('click', () => selectElement(element));
+        return element;
+      }
+
+      // Select an element and show the style editor
+      function selectElement(element) {
+        if (selectedElement) {
+          selectedElement.classList.remove('selected');
+        }
+
+        selectedElement = element;
+        selectedElement.classList.add('selected');
+        styleEditor.classList.remove('hidden');
+        updateStyleInputs();
+      }
+
+      // Update style inputs to match selected element
+      function updateStyleInputs() {
+        const computedStyles = window.getComputedStyle(selectedElement);
+        bgColorInput.value = rgbToHex(computedStyles.backgroundColor);
+        marginInput.value = parseInt(computedStyles.margin) || 0;
+        textAlignInput.value = computedStyles.textAlign || 'left';
+      }
+
+      // Apply styles to the selected element
+      applyStyleButton.addEventListener('click', () => {
+        if (selectedElement) {
+          selectedElement.style.backgroundColor = bgColorInput.value;
+          selectedElement.style.margin = `${marginInput.value}px`;
+          selectedElement.style.textAlign = textAlignInput.value;
+        }
+      });
+
+      // Convert RGB to HEX
+      function rgbToHex(rgb) {
+        const result = rgb.match(/\d+/g);
+        return `#${result.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, '0')).join('')}`;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Date</th>
+          <th style="padding: 8px; text-align: left;">Batch</th>
+          <th style="padding: 8px; text-align: left;">Quantity</th>
+          <th style="padding: 8px; text-align: left;">Craked</th>
+          <th style="padding: 8px; text-align: left;">comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in feedings%}
+        <tr style="background-color: #ffffff;">
+          <!-- Date -->
+          <td style="padding: 8px;">{{ log.collection_date }}</td>
+            <!-- Nom -->
+          <td style="padding: 8px;">{{ log.batch.name }}</td>
+         
+          <!-- Capacité -->
+          <td style="padding: 8px; text-align: center;">{{ log.quantity }}</td>
+          <td style="padding: 8px; text-align: center;">{{ log.craked }}</td>
+          <td style="padding: 8px;">{{ log.comment }}</td>
+          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

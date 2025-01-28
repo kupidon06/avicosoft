@@ -1,0 +1,33 @@
+<div style="overflow-x:auto;">
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+        
+          <th style="padding: 8px; text-align: left;">Image</th>
+          <th style="padding: 8px; text-align: left;">Nom</th>
+          <th style="padding: 8px; text-align: left;">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for race in races %}
+        <tr style="background-color: #ffffff;">
+         
+          <!-- Image -->
+          <td style="padding: 8px; text-align: center;">
+            {% if batiment.photo %}
+            <img src="{{ race.photo.url }}" alt="{{ race.name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+            {% else %}
+            No Image
+            {% endif %}
+          </td>
+          <!-- Nom -->
+          <td style="padding: 8px;">{{ race.name }}</td>
+         
+          <!-- Description -->
+          <td style="padding: 8px;">{{ race.description }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  

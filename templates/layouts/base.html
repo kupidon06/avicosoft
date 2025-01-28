@@ -1,0 +1,77 @@
+{% load static %}
+{% load compress %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  {% include "includes/head.html" %}
+
+  {% block extrastyle %}{% endblock extrastyle %}
+
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-800">
+
+  {% block messages %}{% endblock messages %}
+
+  {% block navigation %}
+    {% include "includes/navigation.html" %}
+  {% endblock navigation %}
+
+  <div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+
+    {% block sidebar %}
+      {% include "includes/sidebar.html" %}
+    {% endblock sidebar %}
+
+    <div class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/90" id="sidebarBackdrop"></div>
+
+    <div id="main-content" class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900">
+      
+      {% if messages %}
+      <div id="notification" 
+           class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg mb-4 opacity-100 transition-all duration-500 z-50 
+           {% for message in messages %}
+             {% if message.tags == 'success' %}
+               bg-green-600
+             {% else %}
+               bg-red-600
+             {% endif %}
+           {% endfor %} 
+           text-white">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(function() {
+          const notification = document.getElementById('notification');
+          if (notification) {
+            notification.style.opacity = 0;
+            setTimeout(function() {
+              notification.style.display = 'none';
+            }, 500); // Delay before hiding completely
+          }
+        }, 5000); // Hide after 5 seconds
+      </script>
+      {% endif %}
+
+      {% block content %}
+      
+      {% endblock content %}
+      {% block footer %}
+        {% include "includes/footer.html" %}
+      {% endblock footer %}
+
+    </div>
+  </div>
+
+  {% include "includes/scripts.html" %}
+  
+  {% block extra_js %}{% endblock extra_js %}
+
+</body>
+
+</html>

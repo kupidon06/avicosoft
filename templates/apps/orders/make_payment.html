@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement de la commande</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Paiement de la commande</h1>
+    <p>Commande : {{ order.id }}</p>
+    <p>Total : {{ order.total_amount }} €</p>
+    <p>Montant payé : {{ order.paid_amount }} €</p>
+    <p>Reste à payer : {{ order.debt_amount }} €</p>
+
+    <label for="amount">Montant à payer :</label>
+    <input type="number" id="amount" value="0">
+
+    <label for="payment_method">Méthode de paiement :</label>
+    <select id="payment_method">
+        <option value="cash">Cash</option>
+        <option value="credit_card">Carte de Crédit</option>
+        <option value="paypal">PayPal</option>
+    </select>
+
+    <label for="transaction_id">ID de transaction (facultatif) :</label>
+    <input type="text" id="transaction_id">
+
+    <label for="remark">Remarque :</label>
+    <textarea id="remark"></textarea>
+
+    <button onclick="submitPayment()">Effectuer le paiement</button>
+
+    <script>
+        function submitPayment() {
+            const amount = document.getElementById('amount').value;
+            const paymentMethod = document.getElementById('payment_method').value;
+            const transactionId = document.getElementById('transaction_id').value;
+            const remark = document.getElementById('remark').value;
+
+            $.ajax({
+                url: '',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    amount: parseFloat(amount),
+                    payment_method: paymentMethod,
+                    transaction_id: transactionId,
+                    remark: remark
+                }),
+                success: function (response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function (error) {
+                    alert(error.responseJSON.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

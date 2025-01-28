@@ -1,0 +1,309 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
+{% endblock extrastyle %}
+
+{% block content %}
+<main>
+  <div class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
+    <div class="w-full mb-1">
+      <div class="mb-4">
+        <nav class="flex mb-5" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
+            <li class="inline-flex items-center">
+              <a href="#" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+                Home
+              </a>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <a href="#" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">E-commerce</a>
+              </div>
+            </li>
+            <li>
+              <div class="flex items-center">
+                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">Products</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">All products</h1>
+      </div>
+      <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
+        <div class="flex items-center mb-4 sm:mb-0">
+          <form class="sm:pr-3" method="GET">
+            <label for="products-search" class="sr-only">Search</label>
+            <div class="relative w-48 mt-1 sm:w-64 xl:w-96">
+              <input type="text" name="search" id="products-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search for products">
+            </div>
+          </form>
+          <div class="flex items-center w-full sm:justify-end">
+            <div class="flex pl-2 space-x-1">
+              <a href="#" class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto mt-8">
+    <div id="error-message" class="hidden text-red-500 mb-4"></div>
+
+    <!-- Filtres -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div>
+        <label for="buildingFilter" class="block font-medium mb-1">Filtrer par Bâtiment</label>
+        <select id="buildingFilter" class="w-full p-2 border border-gray-300 rounded">
+          <option value="">Tous</option>
+        </select>
+      </div>
+      <div>
+        <label for="raceFilter" class="block font-medium mb-1">Filtrer par Race</label>
+        <select id="raceFilter" class="w-full p-2 border border-gray-300 rounded">
+          <option value="">Toutes</option>
+        </select>
+      </div>
+      <div>
+        <label for="sortFilter" class="block font-medium mb-1">Trier par</label>
+        <select id="sortFilter" class="w-full p-2 border border-gray-300 rounded">
+          <option value="">Aucun</option>
+          <option value="name">Nom</option>
+          <option value="created_at">Date de création</option>
+        </select>
+      </div>
+      <div>
+        <label for="orderFilter" class="block font-medium mb-1">Ordre</label>
+        <select id="orderFilter" class="w-full p-2 border border-gray-300 rounded">
+          <option value="asc">Ascendant</option>
+          <option value="desc">Descendant</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table des lots -->
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full align-middle">
+        <div class="overflow-hidden shadow">
+          <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+            <thead class="bg-gray-100 dark:bg-gray-700">
+              <tr>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">ID</th>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Nom</th>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Bâtiment</th>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Race</th>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Créé le</th>
+                <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="batchesTable" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tr>
+                <td colspan="6" class="text-center p-2">Chargement...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="mt-6 flex justify-center space-x-2"></div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-lg max-w-sm w-full">
+        <div class="p-4 border-b border-gray-200">
+          <h5 class="text-lg font-bold">Confirmation</h5>
+        </div>
+        <div class="p-4">
+          Êtes-vous sûr de vouloir supprimer ce lot ?
+        </div>
+        <div class="flex justify-end space-x-2 p-4 border-t border-gray-200">
+          <button class="bg-gray-500 text-white px-4 py-2 rounded" onclick="closeModal()">Annuler</button>
+          <button class="bg-red-500 text-white px-4 py-2 rounded" onclick="deleteBatch()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
+<script src="https://cdn.tailwindcss.com/3.3.3"></script>
+
+<script>
+  let batchToDelete = null;
+  let currentPage = 1;
+  let raceOptions = {};
+  let buildingOptions = {};
+
+  // Fonction pour obtenir le token JWT depuis localStorage
+  function getJwtToken() {
+    return localStorage.getItem('access_token');
+  }
+
+  // Afficher les erreurs
+  function displayError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.classList.remove('hidden');
+  }
+
+  // Cacher les erreurs
+  function hideError() {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.classList.add('hidden');
+  }
+
+  // Charger les sélecteurs
+  async function loadSelectors() {
+    const token = getJwtToken();
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const buildingsResponse = await fetch('/api/management/buildings/', { headers });
+      const racesResponse = await fetch('/api/management/races/', { headers });
+
+      const buildingsData = await buildingsResponse.json();
+      const racesData = await racesResponse.json();
+
+      if (buildingsResponse.ok && racesResponse.ok) {
+        const buildingSelect = document.getElementById('buildingFilter');
+        const raceSelect = document.getElementById('raceFilter');
+
+        buildingsData.results.forEach(building => {
+          const option = document.createElement('option');
+          option.value = building.id;
+          option.textContent = building.name;
+          buildingSelect.appendChild(option);
+          buildingOptions[building.id] = building.name;
+        });
+
+        racesData.results.forEach(race => {
+          const option = document.createElement('option');
+          option.value = race.id;
+          option.textContent = race.name;
+          raceSelect.appendChild(option);
+          raceOptions[race.id] = race.name;
+        });
+      } else {
+        displayError('Erreur lors du chargement des bâtiments ou des races.');
+      }
+    } catch (error) {
+      displayError('Erreur de connexion au serveur.');
+    }
+  }
+
+  // Charger les lots
+  async function fetchBatches(page = 1) {
+    const token = getJwtToken();
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const response = await fetch(`/api/management/batches/?page=${page}`, { headers });
+      const data = await response.json();
+      if (response.ok) {
+        hideError();
+        const tableBody = document.getElementById('batchesTable');
+        tableBody.innerHTML = data.results.map(batch => `
+          <tr>
+            <td class="border border-gray-300 p-2">${batch.id}</td>
+            <td class="border border-gray-300 p-2">${batch.name}</td>
+            <td class="border border-gray-300 p-2">${buildingOptions[batch.building_id] || 'Non spécifié'}</td>
+            <td class="border border-gray-300 p-2">${raceOptions[batch.race_id] || 'Non spécifiée'}</td>
+            <td class="border border-gray-300 p-2">${batch.created_at}</td>
+            <td class="border border-gray-300 p-2">
+              <button class="bg-blue-500 text-white px-2 py-1 rounded" onclick="editBatch(${batch.id})">Modifier</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="confirmDeleteBatch(${batch.id})">Supprimer</button>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        displayError(data.detail || 'Erreur lors du chargement des lots.');
+      }
+    } catch (error) {
+      displayError('Erreur de connexion au serveur.');
+    }
+  }
+
+  function confirmDeleteBatch(batchId) {
+    batchToDelete = batchId;
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.classList.add('hidden');
+  }
+
+  async function deleteBatch() {
+    if (!batchToDelete) return;
+    const token = getJwtToken();
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    try {
+      const response = await fetch(`/api/management/batches/${batchToDelete}/`, {
+        method: 'DELETE',
+        headers,
+      });
+      if (response.ok) {
+        hideError();
+        fetchBatches(currentPage);
+        closeModal();
+      } else {
+        displayError('Erreur lors de la suppression du lot.');
+      }
+    } catch (error) {
+      displayError('Erreur de connexion au serveur.');
+    } finally {
+      batchToDelete = null;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSelectors();
+    fetchBatches(currentPage);
+  });
+</script>
+{% endblock extra_js %}
